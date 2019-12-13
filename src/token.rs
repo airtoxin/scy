@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Token {
     pub row: u32,
     pub col: u32,
@@ -7,11 +7,15 @@ pub struct Token {
 
 impl Token {
     pub fn new(row: u32, col: u32, token_type: TokenType) -> Token {
-        Token { row, col, token_type }
+        Token {
+            row,
+            col,
+            token_type,
+        }
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum TokenType {
     Plus,
     Minus,
