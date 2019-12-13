@@ -93,7 +93,7 @@ impl<'a> Lexer<'a> {
 
 #[test]
 fn lexer_read() {
-    let input = "24568 + 97248".to_string();
+    let input = "24568 + 97248-12340".to_string();
     let mut lexer = Lexer::new(&input);
     assert_eq!(
         lexer.read(),
@@ -103,5 +103,33 @@ fn lexer_read() {
     assert_eq!(
         lexer.read(),
         Token::new(0, 8, TokenType::Int("97248".to_string()))
+    );
+    assert_eq!(lexer.read(), Token::new(0, 13, TokenType::Minus));
+    assert_eq!(
+        lexer.read(),
+        Token::new(0, 14, TokenType::Int("12340".to_string()))
+    );
+}
+
+#[test]
+fn lexer_read_multiline() {
+    let input = r#"2
++ 30 -
+    400"#
+        .to_string();
+    let mut lexer = Lexer::new(&input);
+    assert_eq!(
+        lexer.read(),
+        Token::new(0, 0, TokenType::Int("2".to_string()))
+    );
+    assert_eq!(lexer.read(), Token::new(1, 0, TokenType::Plus));
+    assert_eq!(
+        lexer.read(),
+        Token::new(1, 2, TokenType::Int("30".to_string()))
+    );
+    assert_eq!(lexer.read(), Token::new(1, 5, TokenType::Minus));
+    assert_eq!(
+        lexer.read(),
+        Token::new(2, 4, TokenType::Int("400".to_string()))
     );
 }
