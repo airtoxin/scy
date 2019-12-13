@@ -42,25 +42,28 @@ impl<'a> Lexer<'a> {
                     self.read()
                 }
                 '+' => {
+                    let token = Token::new(self.row, self.col, TokenType::Plus);
                     self.col += 1;
                     self.position += 1;
                     chars.next();
-                    Token::new(self.row, self.col, TokenType::Plus)
+                    token
                 }
                 '-' => {
+                    let token = Token::new(self.row, self.col, TokenType::Minus);
                     self.col += 1;
                     self.position += 1;
                     chars.next();
-                    Token::new(self.row, self.col, TokenType::Minus)
+                    token
                 }
                 _ => {
                     if ch.is_digit(10) {
                         Token::new(self.row, self.col, TokenType::Int(self.read_number(chars)))
                     } else {
+                        let token = Token::new(self.row, self.col, TokenType::ILLEGAL);
                         self.col += 1;
                         self.position += 1;
                         chars.next();
-                        Token::new(self.row, self.col, TokenType::ILLEGAL)
+                        token
                     }
                 }
             },
@@ -90,11 +93,11 @@ impl<'a> Lexer<'a> {
 
 #[test]
 fn lexer_read() {
-    let input = "27529 + 97248".to_string();
+    let input = "24568 + 97248".to_string();
     let mut lexer = Lexer::new(&input);
     assert_eq!(
         lexer.read(),
-        Token::new(0, 0, TokenType::Int("27529".to_string()))
+        Token::new(0, 0, TokenType::Int("24568".to_string()))
     );
     assert_eq!(lexer.read(), Token::new(0, 6, TokenType::Plus));
     assert_eq!(
