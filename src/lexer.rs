@@ -55,6 +55,20 @@ impl<'a> Lexer<'a> {
                     chars.next();
                     token
                 }
+                '*' => {
+                    let token = Token::new(self.row, self.col, TokenType::Star);
+                    self.col += 1;
+                    self.position += 1;
+                    chars.next();
+                    token
+                }
+                '/' => {
+                    let token = Token::new(self.row, self.col, TokenType::Slash);
+                    self.col += 1;
+                    self.position += 1;
+                    chars.next();
+                    token
+                }
                 _ => {
                     if ch.is_digit(10) {
                         Token::new(self.row, self.col, TokenType::Int(self.read_number(chars)))
@@ -93,7 +107,7 @@ impl<'a> Lexer<'a> {
 
 #[test]
 fn lexer_read() {
-    let input = "24568 + 97248-12340".to_string();
+    let input = "24568 + 97248-12340 * 10 / 2".to_string();
     let mut lexer = Lexer::new(&input);
     assert_eq!(
         lexer.read(),
@@ -108,6 +122,16 @@ fn lexer_read() {
     assert_eq!(
         lexer.read(),
         Token::new(0, 14, TokenType::Int("12340".to_string()))
+    );
+    assert_eq!(lexer.read(), Token::new(0, 20, TokenType::Star));
+    assert_eq!(
+        lexer.read(),
+        Token::new(0, 22, TokenType::Int("10".to_string()))
+    );
+    assert_eq!(lexer.read(), Token::new(0, 25, TokenType::Slash));
+    assert_eq!(
+        lexer.read(),
+        Token::new(0, 27, TokenType::Int("2".to_string()))
     );
 }
 
