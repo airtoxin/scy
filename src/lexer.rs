@@ -71,7 +71,7 @@ impl<'a> Lexer<'a> {
                 }
                 _ => {
                     if ch.is_digit(10) {
-                        Token::new(self.row, self.col, TokenType::Int(self.read_number(chars)))
+                        self.read_number(chars)
                     } else {
                         let token = Token::new(self.row, self.col, TokenType::ILLEGAL);
                         self.col += 1;
@@ -84,15 +84,23 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    fn read_number(&mut self, mut chars: Peekable<Chars<'a>>) -> String {
+    fn read_number(&mut self, mut chars: Peekable<Chars<'a>>) -> Token {
+        let row = self.row;
+        let col = self.col;
         let mut diff: usize = 0;
+        let mut is_float = false;
 
         while let Some(ch) = chars.peek() {
-            if !ch.is_digit(10) {
+            if ch.is_digit(10) {
+                chars.next();
+                diff += 1;
+            } else if *ch == '.' {
+                chars.next();
+                diff += 1;
+                is_float = true;
+            } else {
                 break;
             }
-            chars.next();
-            diff += 1;
         }
 
         let num =
@@ -101,7 +109,15 @@ impl<'a> Lexer<'a> {
         self.position += diff as u32;
         self.col += diff as u32;
 
-        num
+        Token::new(
+            row,
+            col,
+            if is_float {
+                TokenType::Float(num)
+            } else {
+                TokenType::Int(num)
+            },
+        )
     }
 }
 
@@ -155,5 +171,20 @@ fn lexer_read_multiline() {
     assert_eq!(
         lexer.read(),
         Token::new(2, 4, TokenType::Int("400".to_string()))
+    );
+}
+
+#[test]
+fn lexer_read_float() {
+    let input = "100.0 * 3.14".to_string();
+    let mut lexer = Lexer::new(&input);
+    assert_eq!(
+        lexer.read(),
+        Token::new(0, 0, TokenType::Float("100.0".to_string()))
+    );
+    assert_eq!(lexer.read(), Token::new(0, 6, TokenType::Star));
+    assert_eq!(
+        lexer.read(),
+        Token::new(0, 8, TokenType::Float("3.14".to_string()))
     );
 }
