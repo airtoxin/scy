@@ -17,19 +17,11 @@ impl Token {
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum TokenType {
-    Plus,  // +
-    Minus, // -
-    Star,  // *
-    Slash, // /
-    //    Percent, // %
-    //    Bang, // !
-    //    Equal, // =
-    //    EqualEqual, // ==
-    //    BangEqual, // !=
-    //    Comma, // ,
-    //    Dot, // .
-    //    Colon, // :
-    //    SemiColon, // ;
+    Plus,      // +
+    Minus,     // -
+    Star,      // *
+    Slash,     // /
+    SemiColon, // ;
     Int(String),
     Float(String),
     EOF,

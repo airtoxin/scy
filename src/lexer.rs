@@ -69,6 +69,13 @@ impl<'a> Lexer<'a> {
                     chars.next();
                     token
                 }
+                ';' => {
+                    let token = Token::new(self.row, self.col, TokenType::SemiColon);
+                    self.col += 1;
+                    self.position += 1;
+                    chars.next();
+                    token
+                }
                 _ => {
                     if ch.is_digit(10) {
                         self.read_number(chars)
